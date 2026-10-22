@@ -77,12 +77,6 @@
 
     label { font-weight: 600; }
 
-    .marca {
-      font-weight: 400;
-      font-size: 0.875rem;
-      color: var(--texto-suave);
-    }
-
     input,
     textarea {
       width: 100%;
@@ -103,22 +97,6 @@
       outline-offset: 1px;
       border-color: var(--primaria);
     }
-
-    input[aria-invalid="true"] {
-      border-color: var(--erro);
-      background: var(--erro-fundo);
-    }
-
-    .erro-campo {
-      margin: 0;
-      padding-left: 8px;
-      border-left: 3px solid var(--erro);
-      color: var(--erro);
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .erro-campo:empty { display: none; }
 
     .acoes-form {
       display: flex;
@@ -241,16 +219,15 @@
       <h2 id="form-titulo">Nova tarefa</h2>
       <form id="form-tarefa" novalidate>
         <div class="campo">
-          <label for="titulo">Título <span class="marca">(obrigatório)</span></label>
-          <input id="titulo" name="titulo" type="text" autocomplete="off" required aria-describedby="titulo-erro" placeholder="Ex.: Revisar proposta do cliente" autofocus>
-          <p id="titulo-erro" class="erro-campo" role="alert"></p>
+          <label for="titulo">Título</label>
+          <input id="titulo" name="titulo" type="text" autocomplete="off" placeholder="Ex.: Revisar proposta do cliente" autofocus>
         </div>
         <div class="campo">
-          <label for="descricao">Descrição <span class="marca">(opcional)</span></label>
+          <label for="descricao">Descrição</label>
           <textarea id="descricao" name="descricao" rows="3"></textarea>
         </div>
         <div class="campo">
-          <label for="data">Data <span class="marca">(opcional)</span></label>
+          <label for="data">Data</label>
           <input id="data" name="data" type="date">
         </div>
         <div class="acoes-form">
@@ -286,7 +263,6 @@
       const campoTitulo = document.getElementById('titulo');
       const campoDescricao = document.getElementById('descricao');
       const campoData = document.getElementById('data');
-      const erroTitulo = document.getElementById('titulo-erro');
       const botaoSalvar = document.getElementById('botao-salvar');
       const botaoCancelar = document.getElementById('botao-cancelar');
       const status = document.getElementById('status');
@@ -344,30 +320,9 @@
         };
       }
 
-      // Toda tentativa de envio (botão ou Enter) passa por aqui antes de gravar.
-      function conferirTitulo() {
-        if (campoTitulo.value.trim()) {
-          limparErroTitulo();
-          return true;
-        }
-        const motivo = campoTitulo.value ? 'O título tem só espaços.' : 'Falta o título.';
-        const acao = editandoId ? 'salvar' : 'cadastrar';
-        erroTitulo.textContent = `${motivo} Informe um título para ${acao} a tarefa.`;
-        campoTitulo.setAttribute('aria-invalid', 'true');
-        campoTitulo.focus();
-        campoTitulo.select();
-        return false;
-      }
-
-      function limparErroTitulo() {
-        erroTitulo.textContent = '';
-        campoTitulo.removeAttribute('aria-invalid');
-      }
-
       function limparFormulario() {
         formulario.reset();
         editandoId = null;
-        limparErroTitulo();
         tituloFormulario.textContent = 'Nova tarefa';
         botaoSalvar.textContent = 'Cadastrar tarefa';
         botaoCancelar.hidden = true;
@@ -386,7 +341,6 @@
         const tarefa = tarefas.find((item) => item.id === id);
         if (!tarefa) return;
         editandoId = id;
-        limparErroTitulo();
         campoTitulo.value = tarefa.titulo;
         campoDescricao.value = tarefa.descricao;
         campoData.value = tarefa.data;
@@ -476,10 +430,13 @@
 
       formulario.addEventListener('submit', (evento) => {
         evento.preventDefault();
-        avisar('');
-        if (!conferirTitulo()) return;
 
         const dados = lerFormulario();
+        if (!dados.titulo) {
+          avisar(editandoId ? 'Não foi possível salvar.' : 'Não foi possível cadastrar.', 'erro');
+          return;
+        }
+
         let mensagem;
         if (editandoId) {
           tarefas = tarefas.map((tarefa) => (tarefa.id === editandoId ? { ...tarefa, ...dados } : tarefa));
@@ -492,10 +449,6 @@
         limparFormulario();
         gravar(mensagem);
         campoTitulo.focus();
-      });
-
-      campoTitulo.addEventListener('input', () => {
-        if (campoTitulo.hasAttribute('aria-invalid') && campoTitulo.value.trim()) limparErroTitulo();
       });
 
       botaoCancelar.addEventListener('click', () => {
