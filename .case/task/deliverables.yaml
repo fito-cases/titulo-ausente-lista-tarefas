@@ -1,0 +1,5 @@
+deliverables:
+  - type: code_change
+    description: "Interface de cadastro revisada para tornar compreensível a rejeição de um título vazio e permitir continuar a tarefa."
+  - type: written_explanation
+    description: "Diagnóstico da dificuldade de interação à luz da heurística e distinção entre orientação após a rejeição e tratamento da entrada inválida previsível."

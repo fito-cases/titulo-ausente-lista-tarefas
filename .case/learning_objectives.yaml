@@ -1,0 +1,9 @@
+learning_objectives:
+  - knowledge_component: execution-fact:heuristicas-nielsen.an-error-message-identifies-the-specific-problem-and-a-way-to-recover
+    bloom_level: APPLICATION
+    description: "Identificar e reparar obstáculos à compreensão e à recuperação de um erro no cadastro de tarefas."
+    weight: primary
+  - knowledge_component: execution-fact:heuristicas-nielsen.error-prone-interaction-conditions-are-removed-or-checked-before-failure
+    bloom_level: APPLICATION
+    description: "Melhorar a interação de cadastro diante de uma condição previsível de entrada inválida."
+    weight: secondary

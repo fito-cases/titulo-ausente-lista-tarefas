@@ -1,0 +1,9 @@
+prerequisites:
+  - knowledge_component: concept:heuristicas-nielsen.heuristica-de-usabilidade
+    bloom_level: COMPREHENSION
+    description: "O uso de uma heurística como princípio de avaliação de dificuldades de interação."
+    mandatory: true
+  - knowledge_component: concept:heuristicas-nielsen.erro-de-interacao
+    bloom_level: KNOWLEDGE
+    description: "A noção de erro de interação em uma tarefa, distinta de uma falha de código."
+    mandatory: true

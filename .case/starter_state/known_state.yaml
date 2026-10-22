@@ -1,0 +1,5 @@
+# Contrato a verificar após a construção da fonte; ainda não é observação da árvore.
+known_errors:
+  - type: interaction
+    description: "Ao tentar cadastrar sem título, o cadastro é rejeitado sem orientação suficiente para reconhecer o requisito e retomar a tarefa."
+build_status: not_applicable

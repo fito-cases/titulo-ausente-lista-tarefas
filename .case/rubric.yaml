@@ -1,0 +1,41 @@
+criteria:
+  - id: recuperacao-no-cadastro
+    title: Reconhecimento do problema e recuperação no cadastro
+    knowledge_component: execution-fact:heuristicas-nielsen.an-error-message-identifies-the-specific-problem-and-a-way-to-recover
+    bloom_level: APPLICATION
+    weight: 70
+    levels:
+      - score: 0
+        label: not_achieved
+        description: "Ao aplicar a heurística ao fluxo alterado, não se encontra orientação utilizável após a rejeição do cadastro; quem tenta cadastrar continua sem identificar o que impediu a ação nem como retomar a tarefa."
+      - score: 1
+        label: partial
+        description: "A rejeição é sinalizada, mas, ao avaliar o fluxo pela perspectiva de recuperação, o impedimento específico ou o caminho para continuar permanece pouco claro; a pessoa ainda precisa adivinhar o que corrigir."
+      - score: 2
+        label: achieved
+        description: "A interface, quando rejeita o cadastro, comunica de modo compreensível que falta um título e orienta a pessoa a fornecer um título para concluir o cadastro; a aplicação da heurística permite reconhecer o problema e recuperar-se do erro sem adivinhação."
+      - score: 3
+        label: exemplary
+        description: "A orientação sobre o título ausente e a retomada da tarefa são claras, perceptíveis e integradas ao fluxo de cadastro; ao aplicar a mesma heurística, a recuperação funciona sem atrapalhar os campos opcionais, as ações de CRUD ou a persistência."
+    evaluation_method:
+      type: human
+  - id: condicao-de-entrada-invalida
+    title: Tratamento da condição previsível de entrada inválida
+    knowledge_component: execution-fact:heuristicas-nielsen.error-prone-interaction-conditions-are-removed-or-checked-before-failure
+    bloom_level: APPLICATION
+    weight: 30
+    levels:
+      - score: 0
+        label: not_achieved
+        description: "Ao aplicar a heurística de prevenção ao cadastro, a condição previsível de título vazio continua sem tratamento antes da tentativa; o fluxo mantém a mesma oportunidade de erro."
+      - score: 1
+        label: partial
+        description: "Existe tratamento anterior ao cadastro em parte da interação, mas um caminho disponível ainda permite chegar à tentativa inválida sem tratamento consistente da condição previsível."
+      - score: 2
+        label: achieved
+        description: "A condição de título vazio é tratada antes de produzir um cadastro inválido, e entradas com título válido ainda permitem cadastrar tarefas; a aplicação da heurística previne a ocorrência previsível sem bloquear a tarefa legítima."
+      - score: 3
+        label: exemplary
+        description: "O tratamento da condição previsível é consistente nos caminhos de interação disponíveis, mantém o cadastro de títulos válidos e não transforma descrição ou data opcionais em exigências; a prevenção integra-se ao fluxo sem fricção desnecessária."
+    evaluation_method:
+      type: human
