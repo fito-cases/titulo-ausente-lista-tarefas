@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tarefas da equipe</title>
+  <style>
+    :root {
+      --fundo: #f3f5f8;
+      --superficie: #ffffff;
+      --texto: #1d2733;
+      --texto-suave: #586474;
+      --borda: #cfd6df;
+      --primaria: #2457c5;
+      --primaria-escura: #1b4399;
+      --destaque: #eef3fd;
+      --erro: #b42318;
+      --erro-fundo: #fdf0ee;
+      --ok: #1d7444;
+      --raio: 8px;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .topo {
+      background: var(--superficie);
+      border-bottom: 1px solid var(--borda);
+      padding: 20px 16px;
+    }
+
+    .topo-conteudo,
+    .layout {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    h1 { margin: 0; font-size: 1.5rem; }
+    .topo p { margin: 4px 0 0; color: var(--texto-suave); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      padding: 24px 16px 48px;
+    }
+
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .painel {
+      background: var(--superficie);
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      padding: 20px;
+    }
+
+    h2 { margin: 0 0 16px; font-size: 1.15rem; }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    label { font-weight: 600; }
+
+    .marca {
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--texto-suave);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+      background: #fff;
+      color: inherit;
+      font: inherit;
+    }
+
+    textarea { min-height: 76px; resize: vertical; }
+
+    input:focus-visible,
+    textarea:focus-visible,
+    button:focus-visible {
+      outline: 3px solid rgba(36, 87, 197, 0.35);
+      outline-offset: 1px;
+      border-color: var(--primaria);
+    }
+
+    input[aria-invalid="true"] {
+      border-color: var(--erro);
+      background: var(--erro-fundo);
+    }
+
+    .erro-campo {
+      margin: 0;
+      padding-left: 8px;
+      border-left: 3px solid var(--erro);
+      color: var(--erro);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .erro-campo:empty { display: none; }
+
+    .acoes-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .primario { background: var(--primaria); color: #fff; }
+    .primario:hover { background: var(--primaria-escura); }
+
+    .secundario {
+      background: #fff;
+      border-color: var(--borda);
+      color: var(--texto);
+    }
+
+    .secundario:hover { background: var(--fundo); }
+
+    .perigo {
+      background: #fff;
+      border-color: #e7b9b4;
+      color: var(--erro);
+    }
+
+    .perigo:hover { background: var(--erro-fundo); }
+
+    .status {
+      min-height: 1.5em;
+      margin: 12px 0 0;
+      font-size: 0.95rem;
+    }
+
+    .status.ok { color: var(--ok); }
+    .status.erro { color: var(--erro); font-weight: 600; }
+
+    .lista-cabecalho {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .contagem { color: var(--texto-suave); font-size: 0.9rem; }
+
+    .busca { margin-bottom: 16px; }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tarefa {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+    }
+
+    .tarefa.em-edicao {
+      border-color: var(--primaria);
+      background: var(--destaque);
+    }
+
+    .tarefa-corpo { flex: 1 1 220px; min-width: 0; }
+
+    .tarefa h3 {
+      margin: 0;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .tarefa time,
+    .selo {
+      display: inline-block;
+      margin-top: 2px;
+      font-size: 0.85rem;
+      color: var(--texto-suave);
+    }
+
+    .selo { margin-left: 8px; color: var(--primaria); font-weight: 600; }
+
+    .tarefa p {
+      margin: 6px 0 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .tarefa-acoes { display: flex; gap: 6px; }
+    .tarefa-acoes button { padding: 6px 12px; font-size: 0.9rem; }
+
+    .vazio { margin: 0; color: var(--texto-suave); }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <h1>Tarefas da equipe</h1>
+      <p>Cadastre, consulte, edite e exclua tarefas. Os dados ficam salvos neste navegador.</p>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="painel" aria-labelledby="form-titulo">
+      <h2 id="form-titulo">Nova tarefa</h2>
+      <form id="form-tarefa" novalidate>
+        <div class="campo">
+          <label for="titulo">Título <span class="marca">(obrigatório)</span></label>
+          <input id="titulo" name="titulo" type="text" autocomplete="off" required aria-describedby="titulo-erro" placeholder="Ex.: Revisar proposta do cliente" autofocus>
+          <p id="titulo-erro" class="erro-campo" role="alert"></p>
+        </div>
+        <div class="campo">
+          <label for="descricao">Descrição <span class="marca">(opcional)</span></label>
+          <textarea id="descricao" name="descricao" rows="3"></textarea>
+        </div>
+        <div class="campo">
+          <label for="data">Data <span class="marca">(opcional)</span></label>
+          <input id="data" name="data" type="date">
+        </div>
+        <div class="acoes-form">
+          <button id="botao-salvar" class="primario" type="submit">Cadastrar tarefa</button>
+          <button id="botao-cancelar" class="secundario" type="button" hidden>Cancelar</button>
+        </div>
+      </form>
+      <p id="status" class="status" role="status"></p>
+    </section>
+
+    <section class="painel" aria-labelledby="lista-titulo">
+      <div class="lista-cabecalho">
+        <h2 id="lista-titulo">Tarefas</h2>
+        <span id="contagem" class="contagem"></span>
+      </div>
+      <div class="campo busca">
+        <label for="busca">Buscar tarefas</label>
+        <input id="busca" type="search" placeholder="Filtrar por título ou descrição">
+      </div>
+      <ul id="lista" class="lista"></ul>
+      <p id="vazio" class="vazio">Nenhuma tarefa cadastrada.</p>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const CHAVE = 'tarefas-da-equipe';
+
+      const formulario = document.getElementById('form-tarefa');
+      const tituloFormulario = document.getElementById('form-titulo');
+      const campoTitulo = document.getElementById('titulo');
+      const campoDescricao = document.getElementById('descricao');
+      const campoData = document.getElementById('data');
+      const erroTitulo = document.getElementById('titulo-erro');
+      const botaoSalvar = document.getElementById('botao-salvar');
+      const botaoCancelar = document.getElementById('botao-cancelar');
+      const status = document.getElementById('status');
+      const campoBusca = document.getElementById('busca');
+      const lista = document.getElementById('lista');
+      const contagem = document.getElementById('contagem');
+      const vazio = document.getElementById('vazio');
+
+      let tarefas = carregar();
+      let editandoId = null;
+
+      function carregar() {
+        try {
+          const salvas = JSON.parse(localStorage.getItem(CHAVE) || '[]');
+          return Array.isArray(salvas)
+            ? salvas.filter((tarefa) => tarefa && typeof tarefa.id === 'string' && typeof tarefa.titulo === 'string')
+            : [];
+        } catch (erro) {
+          return [];
+        }
+      }
+
+      function persistir() {
+        try {
+          localStorage.setItem(CHAVE, JSON.stringify(tarefas));
+          return true;
+        } catch (erro) {
+          return false;
+        }
+      }
+
+      function novoId() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      }
+
+      function formatarData(iso) {
+        const [ano, mes, dia] = iso.split('-');
+        return `${dia}/${mes}/${ano}`;
+      }
+
+      function plural(quantidade) {
+        return quantidade === 1 ? '1 tarefa' : `${quantidade} tarefas`;
+      }
+
+      function avisar(texto, tipo = 'ok') {
+        status.textContent = texto;
+        status.className = texto ? `status ${tipo}` : 'status';
+      }
+
+      function lerFormulario() {
+        return {
+          titulo: campoTitulo.value.trim(),
+          descricao: campoDescricao.value.trim(),
+          data: campoData.value
+        };
+      }
+
+      // Toda tentativa de envio (botão ou Enter) passa por aqui antes de gravar.
+      function conferirTitulo() {
+        if (campoTitulo.value.trim()) {
+          limparErroTitulo();
+          return true;
+        }
+        const motivo = campoTitulo.value ? 'O título tem só espaços.' : 'Falta o título.';
+        const acao = editandoId ? 'salvar' : 'cadastrar';
+        erroTitulo.textContent = `${motivo} Informe um título para ${acao} a tarefa.`;
+        campoTitulo.setAttribute('aria-invalid', 'true');
+        campoTitulo.focus();
+        campoTitulo.select();
+        return false;
+      }
+
+      function limparErroTitulo() {
+        erroTitulo.textContent = '';
+        campoTitulo.removeAttribute('aria-invalid');
+      }
+
+      function limparFormulario() {
+        formulario.reset();
+        editandoId = null;
+        limparErroTitulo();
+        tituloFormulario.textContent = 'Nova tarefa';
+        botaoSalvar.textContent = 'Cadastrar tarefa';
+        botaoCancelar.hidden = true;
+      }
+
+      function gravar(mensagem) {
+        renderizar();
+        if (persistir()) {
+          avisar(mensagem);
+        } else {
+          avisar('O navegador não permitiu salvar as tarefas; esta alteração pode se perder ao recarregar a página.', 'erro');
+        }
+      }
+
+      function iniciarEdicao(id) {
+        const tarefa = tarefas.find((item) => item.id === id);
+        if (!tarefa) return;
+        editandoId = id;
+        limparErroTitulo();
+        campoTitulo.value = tarefa.titulo;
+        campoDescricao.value = tarefa.descricao;
+        campoData.value = tarefa.data;
+        tituloFormulario.textContent = 'Editar tarefa';
+        botaoSalvar.textContent = 'Salvar alterações';
+        botaoCancelar.hidden = false;
+        avisar('');
+        renderizar();
+        campoTitulo.focus();
+      }
+
+      function excluir(id) {
+        const tarefa = tarefas.find((item) => item.id === id);
+        if (!tarefa || !window.confirm(`Excluir a tarefa «${tarefa.titulo}»?`)) return;
+        tarefas = tarefas.filter((item) => item.id !== id);
+        if (editandoId === id) limparFormulario();
+        gravar(`Tarefa «${tarefa.titulo}» excluída.`);
+      }
+
+      function criarBotao(texto, classe, acao, tarefa) {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = classe;
+        botao.textContent = texto;
+        botao.dataset.acao = acao;
+        botao.dataset.id = tarefa.id;
+        botao.setAttribute('aria-label', `${texto} tarefa «${tarefa.titulo}»`);
+        return botao;
+      }
+
+      function criarItem(tarefa) {
+        const item = document.createElement('li');
+        item.className = tarefa.id === editandoId ? 'tarefa em-edicao' : 'tarefa';
+
+        const corpo = document.createElement('div');
+        corpo.className = 'tarefa-corpo';
+
+        const titulo = document.createElement('h3');
+        titulo.textContent = tarefa.titulo;
+        corpo.append(titulo);
+
+        if (tarefa.data) {
+          const quando = document.createElement('time');
+          quando.dateTime = tarefa.data;
+          quando.textContent = formatarData(tarefa.data);
+          corpo.append(quando);
+        }
+
+        if (tarefa.id === editandoId) {
+          const selo = document.createElement('span');
+          selo.className = 'selo';
+          selo.textContent = 'em edição';
+          corpo.append(selo);
+        }
+
+        if (tarefa.descricao) {
+          const descricao = document.createElement('p');
+          descricao.textContent = tarefa.descricao;
+          corpo.append(descricao);
+        }
+
+        const acoes = document.createElement('div');
+        acoes.className = 'tarefa-acoes';
+        acoes.append(
+          criarBotao('Editar', 'secundario', 'editar', tarefa),
+          criarBotao('Excluir', 'perigo', 'excluir', tarefa)
+        );
+
+        item.append(corpo, acoes);
+        return item;
+      }
+
+      function renderizar() {
+        const termo = campoBusca.value.trim().toLocaleLowerCase('pt-BR');
+        const visiveis = termo
+          ? tarefas.filter((tarefa) => `${tarefa.titulo} ${tarefa.descricao}`.toLocaleLowerCase('pt-BR').includes(termo))
+          : tarefas;
+
+        lista.replaceChildren(...visiveis.map(criarItem));
+        contagem.textContent = termo ? `${visiveis.length} de ${plural(tarefas.length)}` : plural(tarefas.length);
+
+        vazio.hidden = visiveis.length > 0;
+        vazio.textContent = tarefas.length
+          ? `Nenhuma tarefa encontrada para «${campoBusca.value.trim()}».`
+          : 'Nenhuma tarefa cadastrada.';
+      }
+
+      formulario.addEventListener('submit', (evento) => {
+        evento.preventDefault();
+        avisar('');
+        if (!conferirTitulo()) return;
+
+        const dados = lerFormulario();
+        let mensagem;
+        if (editandoId) {
+          tarefas = tarefas.map((tarefa) => (tarefa.id === editandoId ? { ...tarefa, ...dados } : tarefa));
+          mensagem = `Tarefa «${dados.titulo}» atualizada.`;
+        } else {
+          tarefas.push({ id: novoId(), ...dados, criadaEm: new Date().toISOString() });
+          mensagem = `Tarefa «${dados.titulo}» cadastrada.`;
+        }
+
+        limparFormulario();
+        gravar(mensagem);
+        campoTitulo.focus();
+      });
+
+      campoTitulo.addEventListener('input', () => {
+        if (campoTitulo.hasAttribute('aria-invalid') && campoTitulo.value.trim()) limparErroTitulo();
+      });
+
+      botaoCancelar.addEventListener('click', () => {
+        limparFormulario();
+        renderizar();
+        avisar('Edição cancelada.');
+        campoTitulo.focus();
+      });
+
+      lista.addEventListener('click', (evento) => {
+        const botao = evento.target.closest('button[data-acao]');
+        if (!botao) return;
+        if (botao.dataset.acao === 'editar') iniciarEdicao(botao.dataset.id);
+        if (botao.dataset.acao === 'excluir') excluir(botao.dataset.id);
+      });
+
+      campoBusca.addEventListener('input', renderizar);
+
+      renderizar();
+    })();
+  </script>
+</body>
+</html>

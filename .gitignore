@@ -1,0 +1,21 @@
+# Saídas de build e relatórios
+dist/
+build/
+coverage/
+node_modules/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Arquivos temporários de editor e sistema
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.#*
+\#*#
+.DS_Store
+Thumbs.db
