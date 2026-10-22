@@ -1,1 +1,7 @@
-artifacts: []
+artifacts:
+  - path: index.html
+    role: target
+    description: "Página única da lista de tarefas: interface de cadastro, consulta, edição e exclusão, com persistência no navegador. O cadastro sem título é rejeitado sem orientação suficiente."
+  - path: .gitignore
+    role: scaffold
+    description: "Ignora arquivos temporários e saídas locais não pertencentes à página do caso."
