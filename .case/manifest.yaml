@@ -1,7 +1,7 @@
 title: Um título ausente no cadastro de tarefas
 type: diagnostic
 version: "1.0.0"
-status: draft
+status: published
 estimated_duration_minutes: 45
 language: pt-BR
 tags: [usabilidade, heuristicas-de-nielsen, formularios, erros, todo-list]
